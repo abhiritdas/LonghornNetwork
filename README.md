@@ -45,7 +45,7 @@ This project simulates a social network called **Longhorn Network**, where stude
    git push
 ---
 
-### Step 2: Generate UML Diagram, State Diagram and Javadoc, DUE DATE: Mar 26th, 2024 11:59pm
+### Step 2: Generate UML Diagram, State Diagram and Javadoc, DUE DATE: Nov 17, 2025 11:59pm
 
 - **Generate UML Diagram and State Diagram**:
   - Create a UML diagram based on the class and method signatures.
@@ -57,7 +57,7 @@ This project simulates a social network called **Longhorn Network**, where stude
   - Include descriptions of parameters and return types.
 ---
 
-### Step 3: Implement Core Components DUE DATE FOR EVERYTHING BELOW: Mar 26th, 2024 11:59pm
+### Step 3: Implement Core Components DUE DATE FOR EVERYTHING BELOW: Dec 1, 2025 11:59pm
 
 Follow the steps below to implement the core functionality of the Longhorn Network. Each section provides specific details, common edge cases, and additional clarifications to help you complete the assignment.
 
@@ -74,7 +74,7 @@ Follow the steps below to implement the core functionality of the Longhorn Netwo
   - Incorrect formatting in input file (e.g., missing `:` separator).
 
 ---
-### Step 4: Implement Core Components DUE DATE FOR EVERYTHING BELOW: Apr 18th, 2024 11:59pm
+### Step 4: Implement Core Components DUE DATE FOR EVERYTHING BELOW: Dec 1st, 2025 11:59pm
 
 ---
 
@@ -254,7 +254,7 @@ Test your graph implementation before using it in algorithms:
   - Compare the output of your implementation with the provided `output_sample.txt`.
   - Write your own additional test cases to ensure robustness and correctness.
 
-### Step 5: Implement Core Components DUE DATE FOR EVERYTHING BELOW: Apr 30th, 2024 11:59pm
+### Step 5: Implement Core Components DUE DATE FOR EVERYTHING BELOW: Dec 8th, 2025 11:59pm
 
 #### SWING UI
 
