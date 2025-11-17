@@ -1,0 +1,111 @@
+@startuml LonghornNetwork
+
+!define ABSTRACT abstract
+
+package "LonghornNetwork" {
+    ABSTRACT class Student {
+        #name: String
+        #age: int
+        #gender: String
+        #year: int
+        #major: String
+        #gpa: double
+        #roommatePreferences: List<String>
+        #previousInternships: List<String>
+        ..
+        {abstract} +calculateConnectionStrength(Student): int
+    }
+
+    class UniversityStudent extends Student {
+        ..
+        +UniversityStudent(name: String, age: int, gender: String, year: int, major: String, gpa: double, roommatePreferences: List<String>, previousInternships: List<String>)
+        +getRoommate(): UniversityStudent
+        +setRoommate(roommate: UniversityStudent): void
+        +calculateConnectionStrength(Student): int
+    }
+
+    class DataParser {
+        {static} +parseStudents(filename: String): List<UniversityStudent>
+    }
+
+    class StudentGraph {
+        -nodes: List<UniversityStudent>
+        -adjacencyList: Map<UniversityStudent, List<Edge>>
+        ..
+        +StudentGraph(students: List<UniversityStudent>)
+        +addEdge(source: UniversityStudent, neighbor: UniversityStudent, weight: double): void
+        +getNeighbors(student: UniversityStudent): List<Edge>
+        +getAllNodes(): List<UniversityStudent>
+        +displayGraph(): void
+        --
+        class Edge {
+            +neighbor: UniversityStudent
+            +weight: double
+        }
+    }
+
+    class GaleShapley {
+        {static} +assignRoommates(students: List<UniversityStudent>): void
+    }
+
+    class PodFormation {
+        -graph: StudentGraph
+        ..
+        +PodFormation(graph: StudentGraph)
+        +formPods(podSize: int): void
+    }
+
+    class ReferralPathFinder {
+        -graph: StudentGraph
+        ..
+        +ReferralPathFinder(graph: StudentGraph)
+        +findReferralPath(start: UniversityStudent, targetCompany: String): List<UniversityStudent>
+    }
+
+    class ChatThread implements Runnable {
+        -sender: UniversityStudent
+        -receiver: UniversityStudent
+        -message: String
+        ..
+        +ChatThread(sender: UniversityStudent, receiver: UniversityStudent, message: String)
+        +run(): void
+    }
+
+    class FriendRequestThread implements Runnable {
+        -sender: UniversityStudent
+        -receiver: UniversityStudent
+        ..
+        +FriendRequestThread(sender: UniversityStudent, receiver: UniversityStudent)
+        +run(): void
+    }
+
+    class Main {
+        {static} +main(args: String[]): void
+        {static} +generateTestCase1(): List<UniversityStudent>
+        {static} +generateTestCase2(): List<UniversityStudent>
+        {static} +generateTestCase3(): List<UniversityStudent>
+        {static} +gradeLab(students: List<UniversityStudent>, testCaseNumber: int): int
+    }
+
+    ' Relationships
+    Student <|-- UniversityStudent : extends
+    DataParser ..> UniversityStudent : parses
+    StudentGraph --> UniversityStudent : contains
+    StudentGraph --> StudentGraph.Edge : uses
+    StudentGraph.Edge --> UniversityStudent : references
+    GaleShapley --> UniversityStudent : pairs
+    PodFormation --> StudentGraph : uses
+    ReferralPathFinder --> StudentGraph : uses
+    ReferralPathFinder --> UniversityStudent : finds paths
+    ChatThread --> UniversityStudent : communicates
+    FriendRequestThread --> UniversityStudent : sends request
+    Main --> UniversityStudent : tests
+    Main --> StudentGraph : creates
+    Main --> GaleShapley : tests
+    Main --> PodFormation : tests
+    Main --> ReferralPathFinder : tests
+    Main --> ChatThread : runs
+    Main --> FriendRequestThread : runs
+}
+
+@enduml
