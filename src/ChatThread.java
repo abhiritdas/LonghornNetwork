@@ -1,3 +1,5 @@
+import java.util.concurrent.Semaphore;
+
 /**
  * ChatThread implements a runnable task for sending chat messages between students.
  * This class enables concurrent communication by allowing messages to be sent
@@ -5,6 +7,11 @@
  * using semaphores or locks to manage message ordering and delivery.
  */
 public class ChatThread implements Runnable {
+    private UniversityStudent sender;
+    private UniversityStudent receiver;
+    private String message;
+    private static final Semaphore semaphore = new Semaphore(1);
+
     /**
      * Constructs a ChatThread with sender, receiver, and message information.
      *
@@ -14,6 +21,9 @@ public class ChatThread implements Runnable {
      */
     public ChatThread(UniversityStudent sender, UniversityStudent receiver, String message) {
         // Constructor
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
     }
 
     /**
@@ -22,6 +32,16 @@ public class ChatThread implements Runnable {
      */
     @Override
     public void run() {
-        // Method signature only
+        try {
+            semaphore.acquire();
+            System.out.println(sender.name + ": " + message);
+        }
+        catch(InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Chat interrupted by: " + e.getMessage());
+        }
+        finally {
+            semaphore.release();
+        }
     }
 }
