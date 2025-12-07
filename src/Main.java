@@ -1,8 +1,14 @@
 import java.util.*;
 import java.util.concurrent.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 // Main.java - Self-contained testing & grading with multiple built‑in test cases.
 public class Main {
+
+    // Abhirit: shared resource used by ChatThread and FriendRequestThread to upload messages.
+    public static List<String> executionLogs = new ArrayList<>();
+
     public static void main(String[] args) {
         // Create a list of test cases.
         List<List<UniversityStudent>> testCases = new ArrayList<>();
@@ -30,6 +36,10 @@ public class Main {
         }
         System.out.println("\n========================================");
         System.out.println("Average Score across all test cases: " + (overallScore / count));
+
+        // Abhirit: Run and export the test cases to React folder
+        // String reactPath = "longhorn-gui/src/data.json";
+        // exportAllTestCasesToJSON(testCases, reactPath);
     }
 
     // Test Case 1: Two groups (Group 1 with four students having mutual preferences, Group 2 with a pair)
@@ -218,12 +228,96 @@ public class Main {
         System.out.println("\nTotal Score for Test Case " + testCaseNumber + ": " + score);
         return score;
     }
+
+    public static void exportDataToJSON(List<UniversityStudent> students, String filename) {
+        StringBuilder json = new StringBuilder();
+        json.append("{\n  \"nodes\": [\n");
+
+        // --- 1. Export Nodes (Students) ---
+        for (int i = 0; i < students.size(); i++) {
+            UniversityStudent s = students.get(i);
+            String roommateName = (s.getRoommate() != null) ? s.getRoommate().name : "None";
+            
+            // Indent the object properties
+            json.append("    {\n");
+            json.append(String.format("      \"id\": \"%s\",\n", s.name));
+            json.append(String.format("      \"group\": \"%s\",\n", s.major));
+            json.append(String.format("      \"roommate\": \"%s\",\n", roommateName));
+            json.append(String.format("      \"internships\": %s\n", listToJson(s.previousInternships)));
+            json.append("    }");
+            
+            if (i < students.size() - 1) {
+                json.append(",\n");
+            } else {
+                json.append("\n");
+            }
+        }
+
+        json.append("  ],\n  \"links\": [\n");
+
+        // --- 2. Export Links (Connections) ---
+        StudentGraph graph = new StudentGraph(students); 
+        boolean firstLink = true;
+
+        for (UniversityStudent s : students) {
+            List<StudentGraph.Edge> edges = graph.getNeighbors(s);
+            if (edges != null) {
+                for (StudentGraph.Edge e : edges) {
+                    if (s.name.compareTo(e.getNeighbor().name) < 0) {
+                        if (!firstLink) {
+                            json.append(",\n");
+                        }
+                        
+                        json.append("    {\n");
+                        json.append(String.format("      \"source\": \"%s\",\n", s.name));
+                        json.append(String.format("      \"target\": \"%s\",\n", e.getNeighbor().name));
+                        json.append(String.format("      \"value\": %d\n", e.getWeight()));
+                        json.append("    }");
+                        firstLink = false;
+                    }
+                }
+            }
+        }
+        if (!firstLink) json.append("\n"); // Add newline if links were added
+
+        // --- 3. Export Logs ---
+        json.append("  ],\n  \"logs\": [\n");
+        if (Main.executionLogs != null && !Main.executionLogs.isEmpty()) {
+            for (int i = 0; i < Main.executionLogs.size(); i++) {
+                // Escape quotes in logs just in case
+                String log = Main.executionLogs.get(i).replace("\"", "\\\"");
+                json.append("    \"").append(log).append("\"");
+                
+                if (i < Main.executionLogs.size() - 1) {
+                    json.append(",\n");
+                } else {
+                    json.append("\n");
+                }
+            }
+        }
+        json.append("  ]\n"); // Close logs array
+
+        json.append("}"); // Close main object
+
+        // --- 4. Write to File ---
+        try (FileWriter file = new FileWriter(filename)) {
+            file.write(json.toString());
+            System.out.println("Successfully exported data to " + filename);
+        } catch (IOException e) {
+            System.err.println("Error writing JSON file: " + e.getMessage());
+        }
+    }
+
+    // --- Helper Method ---
+    // Returns a simple inline JSON array: ["Google", "Amazon"]
+    private static String listToJson(List<String> list) {
+        if (list == null || list.isEmpty()) return "[]";
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < list.size(); i++) {
+            sb.append("\"").append(list.get(i)).append("\"");
+            if (i < list.size() - 1) sb.append(", ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
 }
-
-
-
-
-
-
-
-

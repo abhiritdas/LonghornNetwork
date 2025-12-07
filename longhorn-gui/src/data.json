@@ -1,0 +1,64 @@
+{
+  "nodes": [
+    {
+      "id": "Alice",
+      "group": "Computer Science",
+      "roommate": "Bob",
+      "internships": ["Google"]
+    },
+    {
+      "id": "Bob",
+      "group": "Computer Science",
+      "roommate": "Alice",
+      "internships": ["Google", "Microsoft"]
+    },
+    {
+      "id": "Charlie",
+      "group": "Mathematics",
+      "roommate": "Frank",
+      "internships": ["None"]
+    },
+    {
+      "id": "Frank",
+      "group": "Chemistry",
+      "roommate": "Charlie",
+      "internships": []
+    },
+    {
+      "id": "Dana",
+      "group": "Biology",
+      "roommate": "Evan",
+      "internships": ["Pfizer"]
+    },
+    {
+      "id": "Evan",
+      "group": "Biology",
+      "roommate": "Dana",
+      "internships": ["Moderna", "Pfizer"]
+    }
+  ],
+  "links": [
+    {
+      "source": "Alice",
+      "target": "Bob",
+      "value": 9
+    },
+    {
+      "source": "Alice",
+      "target": "Charlie",
+      "value": 1
+    },
+    {
+      "source": "Charlie",
+      "target": "Frank",
+      "value": 4
+    },
+    {
+      "source": "Dana",
+      "target": "Evan",
+      "value": 10
+    }
+  ],
+  "logs": [
+  ]
+}
