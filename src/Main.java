@@ -38,8 +38,8 @@ public class Main {
         System.out.println("Average Score across all test cases: " + (overallScore / count));
 
         // Abhirit: Run and export the test cases to React folder
-        // String reactPath = "longhorn-gui/src/data.json";
-        // exportAllTestCasesToJSON(testCases, reactPath);
+        String reactPath = "longhorn-gui/src/data.json";
+        exportAllTestCasesToJSON(testCases, reactPath);
     }
 
     // Test Case 1: Two groups (Group 1 with four students having mutual preferences, Group 2 with a pair)
@@ -229,82 +229,124 @@ public class Main {
         return score;
     }
 
-    public static void exportDataToJSON(List<UniversityStudent> students, String filename) {
+    /**
+     * Exports a LIST of Test Cases to a JSON Array.
+     * Each element in the array is a self-contained object with nodes, links, and logs.
+     */
+    public static void exportAllTestCasesToJSON(List<List<UniversityStudent>> allTestCases, String filename) {
         StringBuilder json = new StringBuilder();
-        json.append("{\n  \"nodes\": [\n");
+        json.append("[\n"); // Start JSON Array
 
-        // --- 1. Export Nodes (Students) ---
-        for (int i = 0; i < students.size(); i++) {
-            UniversityStudent s = students.get(i);
-            String roommateName = (s.getRoommate() != null) ? s.getRoommate().name : "None";
+        for (int i = 0; i < allTestCases.size(); i++) {
+            List<UniversityStudent> students = allTestCases.get(i);
+
+            // --- RE-RUN SIMULATION FOR VISUALIZATION ---
+            // We re-run these to ensure the logs and roommates are fresh and isolated for this specific case.
             
-            // Indent the object properties
-            json.append("    {\n");
-            json.append(String.format("      \"id\": \"%s\",\n", s.name));
-            json.append(String.format("      \"group\": \"%s\",\n", s.major));
-            json.append(String.format("      \"roommate\": \"%s\",\n", roommateName));
-            json.append(String.format("      \"internships\": %s\n", listToJson(s.previousInternships)));
-            json.append("    }");
-            
-            if (i < students.size() - 1) {
-                json.append(",\n");
-            } else {
-                json.append("\n");
+            // 1. Clear previous logs so this case has its own clean history
+            executionLogs.clear();
+
+            // 2. Run Gale-Shapley (Ensures roommate assignments are set)
+            GaleShapley.assignRoommates(students);
+
+            // 3. Run Threads (To populate the chat logs for the UI)
+            if (students.size() >= 2) {
+                runThreadsForExport(students.get(0), students.get(1));
             }
-        }
 
-        json.append("  ],\n  \"links\": [\n");
+            // --- BUILD JSON OBJECT ---
+            json.append("  {\n");
+            json.append("    \"caseId\": ").append(i + 1).append(",\n");
+            json.append("    \"caseName\": \"Test Case ").append(i + 1).append("\",\n");
 
-        // --- 2. Export Links (Connections) ---
-        StudentGraph graph = new StudentGraph(students); 
-        boolean firstLink = true;
+            // --- 1. Nodes ---
+            json.append("    \"nodes\": [\n");
+            for (int j = 0; j < students.size(); j++) {
+                UniversityStudent s = students.get(j);
+                String roommateName = (s.getRoommate() != null) ? s.getRoommate().name : "None";
+                
+                json.append("      {\n");
+                json.append(String.format("        \"id\": \"%s\",\n", s.name));
+                json.append(String.format("        \"group\": \"%s\",\n", s.major));
+                json.append(String.format("        \"roommate\": \"%s\",\n", roommateName));
+                json.append(String.format("        \"internships\": %s\n", listToJson(s.previousInternships)));
+                json.append("      }");
 
-        for (UniversityStudent s : students) {
-            List<StudentGraph.Edge> edges = graph.getNeighbors(s);
-            if (edges != null) {
-                for (StudentGraph.Edge e : edges) {
-                    if (s.name.compareTo(e.getNeighbor().name) < 0) {
-                        if (!firstLink) {
-                            json.append(",\n");
+                if (j < students.size() - 1) json.append(",\n");
+                else json.append("\n");
+            }
+            json.append("    ],\n");
+
+            // --- 2. Links ---
+            json.append("    \"links\": [\n");
+            StudentGraph graph = new StudentGraph(students);
+            boolean firstLink = true;
+            for (UniversityStudent s : students) {
+                List<StudentGraph.Edge> edges = graph.getNeighbors(s);
+                if (edges != null) {
+                    for (StudentGraph.Edge e : edges) {
+                        // Undirected graph check: only add if name < neighborName
+                        if (s.name.compareTo(e.getNeighbor().name) < 0) {
+                            if (!firstLink) json.append(",\n");
+                            
+                            json.append("      {\n");
+                            json.append(String.format("        \"source\": \"%s\",\n", s.name));
+                            json.append(String.format("        \"target\": \"%s\",\n", e.getNeighbor().name));
+                            json.append(String.format("        \"value\": %d\n", e.getWeight()));
+                            json.append("      }");
+                            firstLink = false;
                         }
-                        
-                        json.append("    {\n");
-                        json.append(String.format("      \"source\": \"%s\",\n", s.name));
-                        json.append(String.format("      \"target\": \"%s\",\n", e.getNeighbor().name));
-                        json.append(String.format("      \"value\": %d\n", e.getWeight()));
-                        json.append("    }");
-                        firstLink = false;
                     }
                 }
             }
-        }
-        if (!firstLink) json.append("\n"); // Add newline if links were added
+            json.append("\n    ],\n");
 
-        // --- 3. Export Logs ---
-        json.append("  ],\n  \"logs\": [\n");
-        if (Main.executionLogs != null && !Main.executionLogs.isEmpty()) {
-            for (int i = 0; i < Main.executionLogs.size(); i++) {
-                // Escape quotes in logs just in case
-                String log = Main.executionLogs.get(i).replace("\"", "\\\"");
-                json.append("    \"").append(log).append("\"");
-                
-                if (i < Main.executionLogs.size() - 1) {
-                    json.append(",\n");
-                } else {
-                    json.append("\n");
+            // --- 3. Logs ---
+            json.append("    \"logs\": [\n");
+            if (executionLogs != null && !executionLogs.isEmpty()) {
+                for (int k = 0; k < executionLogs.size(); k++) {
+                    String log = executionLogs.get(k).replace("\"", "\\\""); // Escape quotes
+                    json.append("      \"").append(log).append("\"");
+                    if (k < executionLogs.size() - 1) json.append(",\n");
+                    else json.append("\n");
                 }
             }
+            json.append("    ]\n");
+
+            json.append("  }"); // End of this Test Case Object
+
+            // Add comma if there are more test cases
+            if (i < allTestCases.size() - 1) {
+                json.append(",\n");
+            }
         }
-        json.append("  ]\n"); // Close logs array
 
-        json.append("}"); // Close main object
+        json.append("\n]"); // End JSON Array
 
-        // --- 4. Write to File ---
+        // --- Write to File ---
         try (FileWriter file = new FileWriter(filename)) {
             file.write(json.toString());
-            System.out.println("Successfully exported data to " + filename);
+            System.out.println("Successfully exported ALL test cases to " + filename);
         } catch (IOException e) {
             System.err.println("Error writing JSON file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Helper function to run threads safely during export.
+     * We re-run this to capture logs specifically for the generated JSON.
+     */
+    private static void runThreadsForExport(UniversityStudent s1, UniversityStudent s2) {
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        try {
+            executor.submit(new FriendRequestThread(s1, s2));
+            executor.submit(new ChatThread(s1, s2, "Hello from " + s1.name));
+            executor.submit(new FriendRequestThread(s2, s1));
+            executor.submit(new ChatThread(s2, s1, "Hi back from " + s2.name));
+            executor.shutdown();
+            executor.awaitTermination(2, TimeUnit.SECONDS); // Wait for logs to populate
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
         }
     }
 

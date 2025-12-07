@@ -1,64 +1,166 @@
-{
-  "nodes": [
-    {
-      "id": "Alice",
-      "group": "Computer Science",
-      "roommate": "Bob",
-      "internships": ["Google"]
-    },
-    {
-      "id": "Bob",
-      "group": "Computer Science",
-      "roommate": "Alice",
-      "internships": ["Google", "Microsoft"]
-    },
-    {
-      "id": "Charlie",
-      "group": "Mathematics",
-      "roommate": "Frank",
-      "internships": ["None"]
-    },
-    {
-      "id": "Frank",
-      "group": "Chemistry",
-      "roommate": "Charlie",
-      "internships": []
-    },
-    {
-      "id": "Dana",
-      "group": "Biology",
-      "roommate": "Evan",
-      "internships": ["Pfizer"]
-    },
-    {
-      "id": "Evan",
-      "group": "Biology",
-      "roommate": "Dana",
-      "internships": ["Moderna", "Pfizer"]
-    }
-  ],
-  "links": [
-    {
-      "source": "Alice",
-      "target": "Bob",
-      "value": 9
-    },
-    {
-      "source": "Alice",
-      "target": "Charlie",
-      "value": 1
-    },
-    {
-      "source": "Charlie",
-      "target": "Frank",
-      "value": 4
-    },
-    {
-      "source": "Dana",
-      "target": "Evan",
-      "value": 10
-    }
-  ],
-  "logs": [
-  ]
-}
+[
+  {
+    "caseId": 1,
+    "caseName": "Test Case 1",
+    "nodes": [
+      {
+        "id": "Alice",
+        "group": "Computer Science",
+        "roommate": "Bob",
+        "internships": ["Google"]
+      },
+      {
+        "id": "Bob",
+        "group": "Computer Science",
+        "roommate": "Alice",
+        "internships": ["Google", "Microsoft"]
+      },
+      {
+        "id": "Charlie",
+        "group": "Mathematics",
+        "roommate": "Frank",
+        "internships": ["None"]
+      },
+      {
+        "id": "Frank",
+        "group": "Chemistry",
+        "roommate": "Charlie",
+        "internships": []
+      },
+      {
+        "id": "Dana",
+        "group": "Biology",
+        "roommate": "Evan",
+        "internships": ["Pfizer"]
+      },
+      {
+        "id": "Evan",
+        "group": "Biology",
+        "roommate": "Dana",
+        "internships": ["Moderna", "Pfizer"]
+      }
+    ],
+    "links": [
+      {
+        "source": "Alice",
+        "target": "Bob",
+        "value": 9
+      },
+      {
+        "source": "Alice",
+        "target": "Charlie",
+        "value": 1
+      },
+      {
+        "source": "Charlie",
+        "target": "Frank",
+        "value": 4
+      },
+      {
+        "source": "Dana",
+        "target": "Evan",
+        "value": 10
+      }
+    ],
+    "logs": [
+      "Friend request from Alice to Bob",
+      "Alice: Hello from Alice",
+      "Friend request from Bob to Alice",
+      "Bob: Hi back from Bob"
+    ]
+  },
+  {
+    "caseId": 2,
+    "caseName": "Test Case 2",
+    "nodes": [
+      {
+        "id": "Greg",
+        "group": "Economics",
+        "roommate": "Helen",
+        "internships": ["InternshipA"]
+      },
+      {
+        "id": "Helen",
+        "group": "Economics",
+        "roommate": "Ivy",
+        "internships": ["InternshipB"]
+      },
+      {
+        "id": "Ivy",
+        "group": "Economics",
+        "roommate": "Helen",
+        "internships": ["DummyCompany"]
+      }
+    ],
+    "links": [
+      {
+        "source": "Greg",
+        "target": "Helen",
+        "value": 7
+      },
+      {
+        "source": "Greg",
+        "target": "Ivy",
+        "value": 2
+      },
+      {
+        "source": "Helen",
+        "target": "Ivy",
+        "value": 6
+      }
+    ],
+    "logs": [
+      "Friend request from Greg to Helen",
+      "Greg: Hello from Greg",
+      "Friend request from Helen to Greg",
+      "Helen: Hi back from Helen"
+    ]
+  },
+  {
+    "caseId": 3,
+    "caseName": "Test Case 3",
+    "nodes": [
+      {
+        "id": "Jack",
+        "group": "History",
+        "roommate": "Kim",
+        "internships": ["MuseumIntern"]
+      },
+      {
+        "id": "Kim",
+        "group": "History",
+        "roommate": "Jack",
+        "internships": ["MuseumIntern"]
+      },
+      {
+        "id": "Leo",
+        "group": "History",
+        "roommate": "None",
+        "internships": ["None"]
+      }
+    ],
+    "links": [
+      {
+        "source": "Jack",
+        "target": "Kim",
+        "value": 10
+      },
+      {
+        "source": "Jack",
+        "target": "Leo",
+        "value": 2
+      },
+      {
+        "source": "Kim",
+        "target": "Leo",
+        "value": 2
+      }
+    ],
+    "logs": [
+      "Friend request from Jack to Kim",
+      "Jack: Hello from Jack",
+      "Friend request from Kim to Jack",
+      "Kim: Hi back from Kim"
+    ]
+  }
+]

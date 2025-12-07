@@ -31,7 +31,13 @@ public class FriendRequestThread implements Runnable {
     public void run() {
         try {
             semaphore.acquire();
-            System.out.println("Friend request from " + sender.name + " to " + receiver.name);
+            String log = "Friend request from " + sender.name + " to " + receiver.name;
+
+            System.out.println(log);
+            
+            if (Main.executionLogs != null) {
+                Main.executionLogs.add(log);
+            }
         }
         catch(InterruptedException e) {
             Thread.currentThread().interrupt();

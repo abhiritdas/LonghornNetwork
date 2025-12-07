@@ -34,7 +34,13 @@ public class ChatThread implements Runnable {
     public void run() {
         try {
             semaphore.acquire();
-            System.out.println(sender.name + ": " + message);
+            String log = sender.name + ": " + message;
+
+            System.out.println(log);
+
+            if (Main.executionLogs != null) {
+                Main.executionLogs.add(log);
+            }
         }
         catch(InterruptedException e) {
             Thread.currentThread().interrupt();
