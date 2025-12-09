@@ -65,8 +65,8 @@
     "logs": [
       "Friend request from Alice to Bob",
       "Alice: Hello from Alice",
-      "Friend request from Bob to Alice",
-      "Bob: Hi back from Bob"
+      "Bob: Hi back from Bob",
+      "Friend request from Bob to Alice"
     ]
   },
   {
